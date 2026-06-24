@@ -50,8 +50,10 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 # --- ML Model Setup ---
-model = BertForSequenceClassification.from_pretrained("fraud_detection_model")
-tokenizer = BertTokenizer.from_pretrained("fraud_detection_model")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "fraud_detection_model")
+
+model = BertForSequenceClassification.from_pretrained(MODEL_PATH)
+tokenizer = BertTokenizer.from_pretrained(MODEL_PATH)
 model.eval()
 
 def predict(text):
@@ -63,20 +65,6 @@ def predict(text):
     return "Fake Job 🚨" if predicted_class == 1 else "Real Job ✅"
 
 
-
-
-
-'''def predict(text):
-    result = classifier(text)[0]
-    
-    # result example: {'label': 'LABEL_1', 'score': 0.98}
-    label = result['label']
-    
-    if label == 'LABEL_1':
-        return "Fake Job 🚨"
-    else:
-        return "Real Job ✅"
-'''
 # --- Routes ---
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -138,15 +126,10 @@ def delete_history(id):
         flash('History record deleted.', 'info')
     return redirect(url_for('home'))
 
-'''if __name__ == '__main__':
-    with app.app_context():
-        db.create_all() # This creates the new SearchHistory table
-    app.run(debug=True, host="0.0.0.0", port=5000)
-    '''
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with app.app_context():
-        db.create_all()  # Creates tables
+        db.create_all()
 
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
